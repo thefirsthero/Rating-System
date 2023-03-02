@@ -8,7 +8,7 @@ app = Flask(__name__)
 def hello_world():
     return render_template("login.html")
 
-
+# credentials
 database = {'admin': 'admin', 'test': 'account'}
 
 
