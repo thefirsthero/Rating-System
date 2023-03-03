@@ -18,7 +18,7 @@ id INT AUTO_INCREMENT,
    username VARCHAR(100),
    password VARCHAR(500),
    register_date DATETIME,
-   PRIMARY KEY(id);
+   PRIMARY KEY(id));
 '''
 
 # read first name and password from table into dictionary
