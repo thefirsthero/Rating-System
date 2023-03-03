@@ -12,12 +12,13 @@ app.secret_key = "REDACTED"
 # credentials = {'john':'123', 'amy': '123', 'admin':'admin'}
 
 '''
+CREATE DATABASE university;
 CREATE TABLE users(
 id INT AUTO_INCREMENT,
    username VARCHAR(100),
    password VARCHAR(500),
    register_date DATETIME,
-   PRIMARY KEY(id)
+   PRIMARY KEY(id);
 '''
 
 # read first name and password from table into dictionary
