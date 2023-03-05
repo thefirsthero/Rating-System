@@ -18,29 +18,30 @@ id INT AUTO_INCREMENT,
    username VARCHAR(100),
    password VARCHAR(500),
    register_date DATETIME,
-   PRIMARY KEY(id));
+   PRIMARY KEY(id);
 '''
 
-# read first name and password from table into dictionary
-def get_credentials_dict():
-    myconn = mysql.connector.connect(host='localhost', user='root', passwd='root', database='university')
+# read first name and password from table into tuple
+# register method does not allow for two people with the same username
+# therefore this method returns a tuple containing information from one row of a table
+def get_credentials_tuple(uname):
+    myconn = mysql.connector.connect(host='localhost', user='root', passwd='Kyle123', database='rating')
     cur = myconn.cursor()
-
     try:
-        query = 'SELECT username, password FROM users'
+        query = "select coach_name, coach_password from coach where coach_name = '" + uname +"';"
         cur.execute(query)
 
-        myresult = cur.fetchall()
-        dic = { t[0] : t[1] for t in myresult}
+        myresult = cur.fetchone()
+        # dic = { t[0] : t[1] for t in myresult}
 
     except:
         myconn.rollback()
 
     myconn.close()
 
-    return dic
+    return myresult
 
-dic = get_credentials_dict()
+# dic = get_credentials_dict()
 
 # index page
 @app.route('/', methods=["GET", "POST"])
@@ -55,13 +56,13 @@ def login():
     if request.method == 'POST':
         loginUN = request.form["lUN"]
         loginPass = request.form["lPass"]
- 
-        # check if the username entered is registered in the database
-        if loginUN in dic.keys():
 
- 
+        my_tuple = get_credentials_tuple(loginUN)
+        # check if the username entered is registered in the database
+        if my_tuple != None:
+
             # check if the password entered matches up to the hashed password in the database
-            if check_password_hash(dic[loginUN], loginPass):
+            if check_password_hash(my_tuple[1], loginPass):
                 print(f"Login of {loginUN} is valid!")
  
                 # store login information on a cookie
@@ -77,6 +78,8 @@ def login():
             # failed login
             print('User has not registered yet!')
             return redirect('/')
+        
+
     return render_template('login.html')
  
 # code to log user out
@@ -97,31 +100,32 @@ def logout():
 @app.route('/register', methods=["GET", "POST"])
 def register():
     session['register'] = 'registered'
-    global dic
+    # global dic
     
     if request.method == 'POST':
         textPassword = request.form["txtPswd"]
         textUsername = request.form["txtUN"]
- 
+
+        my_tuple = get_credentials_tuple(textUsername)
         # check if the username exists in the db yet
-        if textUsername not in dic.keys():
+        if my_tuple == None:
 
                 # hash password
                 passwordHash = generate_password_hash(textPassword)
 
                 # commit info to mysql
                 # dic[textUsername] = passwordHash
-                myconn = mysql.connector.connect(host='localhost', user='root', passwd='@Jean197119711', database='university')
+                myconn = mysql.connector.connect(host='localhost', user='root', passwd='Kyle123', database='rating')
                 cur = myconn.cursor()
 
-                query = 'INSERT INTO users (username, password, register_date) VALUES (%s, %s, %s)'
+                query = 'INSERT INTO coach (coach_name, coach_password, register_date) VALUES (%s, %s, %s)'
                 val = [(textUsername, passwordHash, datetime.now(pytz.utc))]
                 cur.executemany(query, val)
 
                 myconn.commit()
-
+                
                 # return to index form
-                dic = get_credentials_dict()
+                #dic = get_credentials_dict()
                 return redirect('/')
         else:
             print('Username is taken!')
