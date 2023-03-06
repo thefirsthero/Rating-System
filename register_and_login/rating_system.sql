@@ -18,12 +18,3 @@ coachee_avg_rating float,
 register_date DATETIME,
 primary key (coachee_id)
 );
-
-insert into coach (coach_name, coach_password, coach_avg_rating) values ('admin', 'admin', 5);
-
-select coach_name, coach_password from coach where coach_name='admin';
-
-drop table coach;
-drop table coachee;
-
-select * from coach;
