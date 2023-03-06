@@ -8,6 +8,6 @@ If you do not have a .env file in the root folder directory: create a file calle
 HOST = "YOURHOSTNAME"
 USER = "YOURUSERNAME"
 PASSWD = "YOURPASSWORD"
-DATABASE = "YOURDATABASE"
-
-3. run test_app.py
+DATABASE = "YOURDATABASE --default-- = 'rating'"
+3. Execute the code in 'rating_system.sql' in mysql workbench to attain the correct local database that the code will reference.
+4. run test_app.py
