@@ -1,5 +1,4 @@
-# Usage Instructions
-
+# Usage Instructions<br><br>
 1. Run pip install -r requiremnts.txt from the root directory of the folder<br><br>
 2. Add your local mysql workbench data to the .env file. (Remember never to push this fille when commiting; git will automatically ignore it but just a precationary reminder).
 
