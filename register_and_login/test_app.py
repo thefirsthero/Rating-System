@@ -3,6 +3,10 @@ from flask import Flask, request, render_template, redirect, session
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
 import pytz
+import os
+from dotenv import load_dotenv
+
+load_dotenv() # load environment variables form .env
  
 # create Flask app
 app = Flask(__name__)
@@ -11,19 +15,9 @@ app.secret_key = "REDACTED"
 # user credentials
 # credentials = {'john':'123', 'amy': '123', 'admin':'admin'}
 
-'''
-CREATE DATABASE university;
-CREATE TABLE users(
-id INT AUTO_INCREMENT,
-   username VARCHAR(100),
-   password VARCHAR(500),
-   register_date DATETIME,
-   PRIMARY KEY(id);
-'''
-
 # read first name and password from table into dictionary
 def get_credentials_dict():
-    myconn = mysql.connector.connect(host='localhost', user='root', passwd='root', database='university')
+    myconn = mysql.connector.connect(host=os.getenv('HOST'), user=os.getenv('USER'), passwd=os.getenv('PASSWD'), database=os.getenv('DATABASE'))
     cur = myconn.cursor()
 
     try:
@@ -111,7 +105,7 @@ def register():
 
                 # commit info to mysql
                 # dic[textUsername] = passwordHash
-                myconn = mysql.connector.connect(host='localhost', user='root', passwd='@Jean197119711', database='university')
+                myconn = mysql.connector.connect(host=os.getenv('HOST'), user=os.getenv('USER'), passwd=os.getenv('PASSWD'), database=os.getenv('DATABASE'))
                 cur = myconn.cursor()
 
                 query = 'INSERT INTO users (username, password, register_date) VALUES (%s, %s, %s)'
