@@ -3,6 +3,10 @@ from flask import Flask, request, render_template, redirect, session
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
 import pytz
+import os
+from dotenv import load_dotenv
+
+load_dotenv() # load environment variables form .env
  
 # create Flask app
 app = Flask(__name__)
@@ -10,6 +14,7 @@ app.secret_key = "REDACTED"
 
 # user credentials
 # credentials = {'john':'123', 'amy': '123', 'admin':'admin'}
+
 
 '''
 CREATE DATABASE university;
@@ -25,7 +30,8 @@ id INT AUTO_INCREMENT,
 # register method does not allow for two people with the same username
 # therefore this method returns a tuple containing information from one row of a table
 def get_credentials_tuple(uname):
-    myconn = mysql.connector.connect(host='localhost', user='root', passwd='Kyle123', database='rating')
+    myconn = mysql.connector.connect(host=os.getenv('HOST'), user=os.getenv('USER'), passwd=os.getenv('PASSWD'), database=os.getenv('DATABASE'))
+
     cur = myconn.cursor()
     try:
         query = "select coach_name, coach_password from coach where coach_name = '" + uname +"';"
@@ -115,7 +121,9 @@ def register():
 
                 # commit info to mysql
                 # dic[textUsername] = passwordHash
-                myconn = mysql.connector.connect(host='localhost', user='root', passwd='Kyle123', database='rating')
+
+                myconn = mysql.connector.connect(host=os.getenv('HOST'), user=os.getenv('USER'), passwd=os.getenv('PASSWD'), database=os.getenv('DATABASE'))
+
                 cur = myconn.cursor()
 
                 query = 'INSERT INTO coach (coach_name, coach_password, register_date) VALUES (%s, %s, %s)'
