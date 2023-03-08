@@ -32,10 +32,7 @@ id INT AUTO_INCREMENT,
 # therefore this method returns a tuple containing information from one row of a table
 def get_credentials_tuple(uname):
     '''This function returns the credentials of the user'''
-    myconn = mysql.connector.connect(host=os.getenv('HOST'),
-                                    user=os.getenv('USER'),
-                                    passwd=os.getenv('PASSWD'),
-                                    database=os.getenv('DATABASE'))
+    myconn = mysql.connector.connect(host=os.getenv('HOST'), user=os.getenv('USER'), passwd=os.getenv('PASSWD'), database=os.getenv('DATABASE'))
 
     cur = myconn.cursor()
     try:
@@ -77,7 +74,7 @@ def login():
 
                 # store login information on a cookie
                 session['username'] = login_un
-                return redirect('/')
+                return render_template('home.html')
             else:
 
                 # failed login
@@ -128,10 +125,7 @@ def register():
             # commit info to mysql
             # dic[text_username] = password_hash
 
-            myconn = mysql.connector.connect(host=os.getenv('HOST'),
-                                            user=os.getenv('USER'),
-                                            passwd=os.getenv('PASSWD'),
-                                            database=os.getenv('DATABASE'))
+            myconn = mysql.connector.connect(host=os.getenv('HOST'), user=os.getenv('USER'), passwd=os.getenv('PASSWD'), database=os.getenv('DATABASE'))
 
             cur = myconn.cursor()
 
@@ -149,6 +143,8 @@ def register():
             session.pop('register', default=None)
 
     return render_template('register.html')
+
+
 
 # generic Flask app guard
 if __name__ == '__main__':
