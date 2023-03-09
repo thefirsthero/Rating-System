@@ -22,20 +22,23 @@ primary key (coachee_id)
 );
 
 
-# NB: Only create the table 'rating' after you have inserted dummy data
-# into the 'coach' and 'coachee' tables.
-
-# FYI:
-# You can't add a NOT NULL column to a table 
-# that has more than zero rows, 
-# when the column is constrained to values that match those in the parent table,
-# and yet has only NULL values because it's a new, unpopulated column with no DEFAULT.
-
 create table rating(
 rating_id int not null auto_increment,
-foreign key(coach_id) references coach(coach_id),
-foreign key(coachee_id) references coachee(coachee_id),
+coach_id_fk int,
+coachee_id_fk int,
 avg_rating float not null,
-coach_rated bool
+coach_rated bool,
+primary key(rating_id)
 );
 
+# add coach_id as foreign key to rating table
+Alter table rating
+add constraint coach_fk
+foreign key (coach_id_fk)
+references coach(coach_id);
+
+# add coachee_id as foreign key to rating table
+Alter table rating
+add constraint coachee_fk
+foreign key (coachee_id_fk)
+references coachee(coachee_id);
