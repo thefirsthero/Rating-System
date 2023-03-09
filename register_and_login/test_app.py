@@ -20,13 +20,13 @@ app.secret_key = "REDACTED"
 # register method does not allow for two people with the same username
 # therefore this method returns a tuple containing information from one row of a table
 
-def get_credentials_tuple(user_email):
+def get_credentials_tuple(user_email, userType):
     '''This function returns the credentials of the user'''
     myconn = mysql.connector.connect(host=os.getenv('HOST'), user=os.getenv('USER'), passwd=os.getenv('PASSWD'), database=os.getenv('DATABASE'))
 
     cur = myconn.cursor()
     try:
-        query = "select coach_name, coach_password from coach where coach_email = '" + user_email +"';"
+        query = "select " + userType + "_name,"  + userType + "_password from " + userType + " where "  + userType + "_email = '" + user_email +"';"
         cur.execute(query)
 
         myresult = cur.fetchone()
@@ -145,7 +145,7 @@ def register():
 
             cur = myconn.cursor()
 
-            query = 'INSERT INTO coach (coach_name, coach_lastname, coach_email, coach_password, user_type, register_date) VALUES (%s, %s, %s, %s, %s ,%s)'
+            query = 'INSERT INTO ' + userType + ' (' + userType + '_name,'  + userType + '_lastname,'  + userType + '_email,'  + userType + '_password, user_type, register_date) VALUES (%s, %s, %s, %s, %s ,%s)'
             val = [(textName, textLName, textEmail, passwordHash,
                     userType,  datetime.now(pytz.utc))]
 
