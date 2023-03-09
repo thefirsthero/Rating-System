@@ -20,14 +20,13 @@ app.secret_key = "REDACTED"
 # register method does not allow for two people with the same username
 # therefore this method returns a tuple containing information from one row of a table
 
-
-def get_credentials_tuple(uname):
-    myconn = mysql.connector.connect(host=os.getenv('HOST'), user=os.getenv(
-        'USER'), passwd=os.getenv('PASSWD'), database=os.getenv('DATABASE'))
+def get_credentials_tuple(user_email):
+    '''This function returns the credentials of the user'''
+    myconn = mysql.connector.connect(host=os.getenv('HOST'), user=os.getenv('USER'), passwd=os.getenv('PASSWD'), database=os.getenv('DATABASE'))
 
     cur = myconn.cursor()
     try:
-        query = "select coach_name, coach_password from coach where coach_email = '" + uname + "';"
+        query = "select coach_name, coach_password from coach where coach_email = '" + user_email +"';"
         cur.execute(query)
 
         myresult = cur.fetchone()
@@ -64,6 +63,7 @@ def login():
 
     # retrieve info from login form
     if request.method == 'POST':
+
         login_email = request.form.get("email")
         login_password = request.form.get('user_password')
 
@@ -71,6 +71,7 @@ def login():
         # check if the email entered is registered in the database
         if my_tuple != None:
             # check if the password entered matches up to the hashed password in the database
+
             if check_password_hash(my_tuple[1], login_password):
                 print(f"Login of {login_email} is valid!")
 
@@ -83,6 +84,7 @@ def login():
                 
                 print(f'Login of {login_email} is invalid!')
                 return render_template('login.html', error_msg = "Incorrect password, try again.")
+
         else:
             return render_template("login.html", error_msg = "User has not registered yet")
             # failed login
@@ -116,6 +118,7 @@ def register():
     # global dic
 
     if request.method == 'POST':
+
         textName = request.form.get('first-name')
         textLName = request.form.get('last-name')
         textEmail = request.form.get('email')
@@ -145,6 +148,7 @@ def register():
             query = 'INSERT INTO coach (coach_name, coach_lastname, coach_email, coach_password, user_type, register_date) VALUES (%s, %s, %s, %s, %s ,%s)'
             val = [(textName, textLName, textEmail, passwordHash,
                     userType,  datetime.now(pytz.utc))]
+
             cur.executemany(query, val)
 
             myconn.commit()
