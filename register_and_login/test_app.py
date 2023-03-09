@@ -5,8 +5,7 @@ import mysql.connector
 import pytz
 import os
 from dotenv import load_dotenv
-from tkinter import *
-import tkinter.messagebox
+
 load_dotenv()  # load environment variables form .env
 
 # create Flask app
@@ -40,11 +39,32 @@ def get_credentials_tuple(user_email, userType):
 
     return myresult
 
-# dic = get_credentials_dict()
+def checkIfEmailExists():
+    '''check if email exists'''
+    myconn = mysql.connector.connect(host=os.getenv('HOST'), user=os.getenv('USER'), passwd=os.getenv('PASSWD'), database=os.getenv('DATABASE'))
+
+    cur = myconn.cursor()
+    try:
+        query = "SELECT coach_email FROM coach UNION SELECT coachee_email FROM coachee;"
+        cur.execute(query)
+
+        myresult = cur.fetchone()
+        # dic = { t[0] : t[1] for t in myresult}
+
+    except:
+        myresult = None
+        myconn.rollback()
+
+    myconn.close()
+    print(myresult)
+
+    if myresult == None:
+        return True
+    else:
+        return False
+    
 
 # index page
-
-
 @app.route('/', methods=["GET", "POST"])
 def index():
     return render_template('index.html')
@@ -59,15 +79,16 @@ def success():
 
 @app.route('/login', methods=["GET", "POST"])
 def login():
-    root = Tk()
+    # checkIfEmailExists()
+
 
     # retrieve info from login form
     if request.method == 'POST':
 
         login_email = request.form.get("email")
         login_password = request.form.get('user_password')
-
-        my_tuple = get_credentials_tuple(login_email)
+        # TODO: FIX THIS AS IT IS HARDCODED
+        my_tuple = get_credentials_tuple(login_email, 'coach')
         # check if the email entered is registered in the database
         if my_tuple != None:
             # check if the password entered matches up to the hashed password in the database
@@ -124,15 +145,18 @@ def register():
         textEmail = request.form.get('email')
         textPassword = request.form.get('new-password')
         userType = ''
-        if (request.form.get('coach') != ""):
-            userType = 'coachee'
-        else:
-            userType = 'coach'
 
-        my_tuple = get_credentials_tuple(textEmail)
+        # Checking if coach was selected
+        if 'coach1' in request.form:
+            userType = 'coach'
+        else:
+            userType = 'coachee'
+
+        my_tuple = get_credentials_tuple(textEmail, userType)
+        emailExists = checkIfEmailExists()
 
         # check if the username exists in the db yet
-        if my_tuple == None:
+        if emailExists is True:
 
             # hash password
             passwordHash = generate_password_hash(textPassword)
@@ -145,7 +169,7 @@ def register():
 
             cur = myconn.cursor()
 
-            query = 'INSERT INTO ' + userType + ' (' + userType + '_name,'  + userType + '_lastname,'  + userType + '_email,'  + userType + '_password, user_type, register_date) VALUES (%s, %s, %s, %s, %s ,%s)'
+            query = 'INSERT INTO ' + userType + ' (' + userType + '_name,'  + userType + '_surname,'  + userType + '_email,'  + userType + '_password, user_type, register_date) VALUES (%s, %s, %s, %s, %s ,%s)'
             val = [(textName, textLName, textEmail, passwordHash,
                     userType,  datetime.now(pytz.utc))]
 
@@ -154,7 +178,6 @@ def register():
             myconn.commit()
 
             # return to index form
-            # dic = get_credentials_dict()
             return redirect('/')
         else:
             print('Email already registered, please log in!')
