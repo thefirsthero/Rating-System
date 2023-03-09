@@ -30,13 +30,13 @@ id INT AUTO_INCREMENT,
 # read first name and password from table into tuple
 # register method does not allow for two people with the same username
 # therefore this method returns a tuple containing information from one row of a table
-def get_credentials_tuple(uname):
+def get_credentials_tuple(user_email):
     '''This function returns the credentials of the user'''
     myconn = mysql.connector.connect(host=os.getenv('HOST'), user=os.getenv('USER'), passwd=os.getenv('PASSWD'), database=os.getenv('DATABASE'))
 
     cur = myconn.cursor()
     try:
-        query = "select coach_name, coach_password from coach where coach_name = '" + uname +"';"
+        query = "select coach_name, coach_password from coach where coach_email = '" + user_email +"';"
         cur.execute(query)
 
         myresult = cur.fetchone()
@@ -61,24 +61,24 @@ def login():
     '''This function is responsible for validating a users loging credentials'''
     # retrieve info from login form
     if request.method == 'POST':
-        login_un = request.form["lUN"]
+        login_email = request.form["Lemail"]
         login_pass = request.form["lPass"]
 
-        my_tuple = get_credentials_tuple(login_un)
+        my_tuple = get_credentials_tuple(login_email)
         # check if the username entered is registered in the database
         if my_tuple is not None:
 
             # check if the password entered matches up to the hashed password in the database
             if check_password_hash(my_tuple[1], login_pass):
-                print(f"Login of {login_un} is valid!")
+                print(f"Login of {login_email} is valid!")
 
                 # store login information on a cookie
-                session['username'] = login_un
+                session['username'] = login_email
                 return render_template('home.html')
             else:
 
                 # failed login
-                print(f'Login of {login_un} is invalid!')
+                print(f'Login of {login_email} is invalid!')
                 return redirect('/')
         else:
 
@@ -113,9 +113,11 @@ def register():
 
     if request.method == 'POST':
         text_password = request.form["txtPswd"]
-        text_username = request.form["txtUN"]
+        text_name = request.form["txtName"]
+        text_surname = request.form["txtSurname"]
+        text_email = request.form["txtEmail"]
 
-        my_tuple = get_credentials_tuple(text_username)
+        my_tuple = get_credentials_tuple(text_email)
         # check if the username exists in the db yet
         if my_tuple is None:
 
@@ -129,8 +131,8 @@ def register():
 
             cur = myconn.cursor()
 
-            query = 'INSERT INTO coach (coach_name, coach_password, register_date) VALUES (%s, %s, %s)'
-            val = [(text_username, password_hash, datetime.now(pytz.utc))]
+            query = 'INSERT INTO coach (coach_name, coach_surname, coach_password, coach_email, register_date) VALUES (%s, %s, %s, %s, %s)'
+            val = [(text_name, text_surname, password_hash, text_email, datetime.now(pytz.utc))]
             cur.executemany(query, val)
 
             myconn.commit()
