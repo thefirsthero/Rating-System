@@ -19,15 +19,10 @@ logging.ERROR
 logging.CRITICAL
 '''
 
-# create or get logger
 logger = logging.getLogger(__name__)
-
-#set log level
+FORMAT = "[%(filename)s:%(lineno)s - %(funcName)20s() ] %(message)s"
+logging.basicConfig(format=FORMAT)
 logger.setLevel(logging.WARNING)
- 
-# logging configuration
-logging.basicConfig(filename='log/record.log',
-                    format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
 # create Flask app
 app = Flask(__name__)
@@ -182,4 +177,4 @@ def register():
 
 # generic Flask app guard
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
