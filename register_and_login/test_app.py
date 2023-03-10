@@ -5,8 +5,22 @@ import mysql.connector
 import pytz
 import os
 from dotenv import load_dotenv
+import logging
 
 load_dotenv()  # load environment variables form .env
+
+'''
+NB: Chossing a logging levels logs that level and all subsequent levels
+logging levels:
+logging.DEBUG
+logging.INFO
+logging.WARNING
+logging.ERROR
+logging.CRITICAL
+'''
+# logging configurtion
+logging.basicConfig(filename='log/record.log',
+                level=logging.DEBUG, format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
 # create Flask app
 app = Flask(__name__)
@@ -74,7 +88,7 @@ def index():
 
 @app.route('/success')
 def success():
-    return render_template('success.html')
+    return render_template('home.html')
 
 
 @app.route('/login', methods=["GET", "POST"])
