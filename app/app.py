@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Flask, request, render_template, redirect, session, url_for
+from flask import Flask, request, render_template, redirect, session, url_for,flash
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
 import pytz
@@ -124,6 +124,7 @@ def logout():
 
 
 @app.route('/register', methods=["GET", "POST"])
+
 def register():
     session['register'] = 'registered'
     # global dic
@@ -169,6 +170,7 @@ def register():
             # dic = get_credentials_dict()
             return redirect('/')
         else:
+            flash('Email already registered, please log in!')
             print('Email already registered, please log in!')
             return redirect(url_for('login'))
 

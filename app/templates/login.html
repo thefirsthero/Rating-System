@@ -25,6 +25,12 @@
 
         }
 
+        h2 {
+            margin: 1em auto;
+            text-align: center;
+            font-weight: bolder;
+        }
+
         p {
             margin: 1em auto;
             text-align: center;
@@ -94,6 +100,9 @@
 <body>
     <div class="content_div">
         <h1> Log In</h1>
+        {% for message in get_flashed_messages() %}
+        <h2>{{ message }}</h2>
+        {% endfor %}
         <p> Please fill out your details to log in</p>
 
         <form action="{{url_for('login')}}" method="post">
