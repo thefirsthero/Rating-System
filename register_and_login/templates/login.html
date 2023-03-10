@@ -6,14 +6,15 @@
     <meta charset="UTF-8">
     <style>
         body {
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            background-color: #517EF5;
+            justify-content: center;
+            align-items: center;
+            background-image: url("../static/image.jpg");
+            background-size: cover;
             color: #f5f6f7;
             font-family: 'Tahoma';
             font-size: 16px;
             font-weight: bold;
+
         }
 
         h1 {
@@ -43,7 +44,7 @@
         }
 
         fieldset {
-            border-color: #05b882;
+            border-color: #ff0cff;
             border-style: dashed;
             padding-top: 2rem;
             padding-bottom: 2rem;
@@ -74,31 +75,46 @@
             display: inline-block;
             width: 20%;
             font-size: medium;
-            
-        }
 
-     
+        }
+        .content_div{
+            color: rgb(255, 255, 255);
+            background-color: rgba(34, 18, 39, 0.5);
+            background-size:contain;
+            width: 525px;
+            margin:auto;
+            border: 5px;
+            border-width: 4px;
+            border-color: coral;
+            margin-top: 150px;
+        }
     </style>
 </head>
 
 <body>
+    <div class="content_div">
+        <h1> Log In</h1>
+        <p> Please fill out your details to log in</p>
 
-    <h1> Log In</h1>
-    <p> Please fill out your details to log in</p>
+        <form action="{{url_for('login')}}" method="post">
+            <fieldset>
+                <label for="email">Enter Your Email: <input type="email" id="email" name="email" required>
+                </label>
 
-    <form action="{{url_for('login')}}" method="post">
-        <fieldset>
-            <label for="email">Enter Your Email: <input type="email" id="email" name="email" required>
-            </label>
+                <label for="user_password">Enter Your Password: <input type="password" id="user_password"
+                        name="user_password" required minlength="6">
+                </label>
+                <p>{{error_msg}}</p>
+            </fieldset><br>
+            <button type="submit" onclick="history.back()">Back</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            &nbsp;<button type="submit">Log In</button>
 
-            <label for="user_password">Enter Your Password: <input type="password" id="user_password"
-                    name="user_password" required minlength="6">
-            </label>
-            <p>{{error_msg}}</p>
-        </fieldset><br>
-        <button type="submit" onclick="history.back()">Back</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<button type="submit">Log In</button>
+        </form>
+    </div>
 
-    </form>
 </body>
 
 </html>
