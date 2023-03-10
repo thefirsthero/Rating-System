@@ -154,6 +154,8 @@ def logout():
             # log user out
             session.pop('username', default=None)
             session.pop('email', default=None)
+            session.pop('user_type', default=None)
+            
         return redirect('/')
     except:
         return redirect('/')
