@@ -3,7 +3,49 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
+                body {
+            background: #f1f1f1;
+        }
+        body h1 {
+        font-family: 'Roboto Slab', serif;
+            margin: 50px 20px 40px;
+            font-size: 50px;
+            letter-spacing: 0.5px;
+            color: #999;
+            text-align: center;
+        }
+        .rating {
+            width: 208px;
+            height: 40px;
+            margin: 0 auto;
+            padding: 40px 50px;
+            border: 1px solid #ccc;
+            background: #f9f9f9;
+        }
+        .rating label {
+            float: right;
+            position: relative;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+        }
+        .rating label:not(:first-of-type) {
+            padding-right: 2px;
+        }
+        .rating label:before {
+            content: "\2605";
+            font-size: 42px;
+            color: #ccc;
+            line-height: 1;
+        }
+        .rating input {
+            display: none;
+        }
+        .rating input:checked ~ label:before, .rating:not(:checked) > label:hover:before, .rating:not(:checked) > label:hover ~ label:before {
+            color: #f9df4a;
+        }
         body {
             justify-content: center;
             align-items: center;
@@ -89,17 +131,43 @@
         .open-button:hover {
             opacity: 1;
         }
+        .checked {
+        color: orange;
+        }
     </style>
     <script type="text/javascript" src="{{ url_for('static', filename = 'hello.js') }}"></script>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://kit.fontawesome.com/070428bd88.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="style.css">
+    <title>Feedback Form | ATM </title>
 </head>
 
 <body>
-    <h2>Home Page</h2>
-    <p>We'll add the buttons for the users to actually do things here.</p>
-    <p>Might need two separate forms for coaches and coachess, and the logic in the code to redirect them to the different pages</p>
+    <div class="container">
+        <div class="review__section">
+          <strong>Rate your experience</strong>
+          <p class="review__title"></p>
+        </div>
+        <div class="review__section">
+          <span class="review__emoji">&#127773</span>
+          <div class="reviewStars">
+            <span data-rating="1"><i class="far fa-star"></i></span>
+            <span data-rating="2"><i class="far fa-star"></i></span>
+            <span data-rating="3"><i class="far fa-star"></i></span>
+            <span data-rating="4"><i class="far fa-star"></i></span>
+            <span data-rating="5"><i class="far fa-star"></i></span>
+          </div>
+        </div>
+      </div>
+      <h2></h2>Email:<br>
+        <input type="text" name='email'><br>
+  
+    <script src="static/main.js"></script>
 
-    <button onclick="window.location.href='go_to_rating';">
-        Create Rating
+    <button onclick="window.location.href='create_rating';">
+        Submit
       </button>
 
 </body>

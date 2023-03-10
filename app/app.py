@@ -106,10 +106,10 @@ def landingPage():
 
 @app.route('/home')
 def success():
+    # create_rating(5, 'test@gmail.com')
     return render_template('home.html')
 
-def create_rating():
-    pass
+# TODO: Change how you pass the email in when making the dropdown
 
 @app.route('/login', methods=["GET", "POST"])
 def login():
@@ -164,10 +164,8 @@ def logout():
 
 
 @app.route('/register', methods=["GET", "POST"])
-
 def register():
     session['register'] = 'registered'
-    # global dic
 
     if request.method == 'POST':
         textName = request.form.get('first-name')
@@ -191,8 +189,6 @@ def register():
             passwordHash = generate_password_hash(textPassword)
 
             # commit info to mysql
-            # dic[textUsername] = passwordHash
-
             myconn = mysql.connector.connect(host=os.getenv('HOST'), user=os.getenv(
                 'USER'), passwd=os.getenv('PASSWD'), database=os.getenv('DATABASE'))
 
@@ -206,7 +202,6 @@ def register():
             myconn.commit()
 
             # return to index form
-            # dic = get_credentials_dict()
             logger.warning('Successfully registered!')
             return redirect('/')
         else:
@@ -216,7 +211,137 @@ def register():
 
     return render_template('register.html')
 
+@app.route('/go_to_rating')
+def go_to_rating():
+    return render_template('rating.html')
+
+@app.route('/create_rating')
+def create_rating():
+    print('I am called')
+    # TODO: REMOVE THESE HARDCODED VALUES
+    rating = 2
+    email = 'test@gmail.com'
+    # email = request.form['email']
+    # rating_num = request.form['reviewStars']
+    # print(rating_num)
+
+    print('I am called')
+    # Initialise mysql
+    myconn = mysql.connector.connect(host=os.getenv('HOST'), user=os.getenv(
+                'USER'), passwd=os.getenv('PASSWD'), database=os.getenv('DATABASE'))
+
+    cur = myconn.cursor()
+
+    # getting coachID or coacheeID for rater
+    raterID = None
+    if session['user_type'] == 'coach':
+        query = 'SELECT coach_id FROM coach WHERE coach_email = "' + session['email'] + '";'
+        cur.execute(query)
+        raterID = cur.fetchone()[0]
+
+        # get ratee id
+        query = 'SELECT coachee_id FROM coachee WHERE coachee_email = "' + email + '";'
+        cur.execute(query)
+        rateeID = cur.fetchone()[0]
+    else:
+        query = 'SELECT coachee_id FROM coachee WHERE coachee_email = "' + session['email'] + '";'
+        cur.execute(query)
+        raterID = cur.fetchone()[0]
+
+        # get ratee id
+        query = 'SELECT coach_id FROM coach WHERE coach_email = "' + email + '";'
+        cur.execute(query)
+        rateeID = cur.fetchone()[0]
+
+    # Populate table
+    try:
+            
+        query = 'INSERT INTO rating (coach_id_fk, coachee_id_fk, rating, register_date) VALUES (%s, %s, %s, %s)'
+        val = [(raterID, rateeID, rating, datetime.now(pytz.utc))]
+        cur.executemany(query, val)
+
+        myconn.commit()
+
+        
+    except:
+        # print(query)
+        # print(type(raterID))
+        # print(type(rateeID))
+        # print(type(rating))
+        myconn.rollback()
+
+    myconn.close()
+
+    return render_template('home.html')
+'''
+function closeForm() {
+        // Getting user inputted values from form
+        document.getElementById("myForm").style.display = "none";
+        star1 = document.getElementById("star1")
+        star2 = document.getElementById("star2")
+        star3 = document.getElementById("star3")
+        star4 = document.getElementById("star4")
+        star5 = document.getElementById("star5")
+        email = document.getElementById("text2").value
+        comment = document.getElementById("text1").value
+
+        // Checking which star rating was given
+        rating_number = 0
+        if(star1.checked) {
+            rating_number = 1
+        }else if(star2.checked) {
+            rating_number = 2
+        }else if(star3.checked) {
+            rating_number = 3
+        }else if(star4.checked) {
+            rating_number = 4
+        }else if(star5.checked) {
+            rating_number = 5
+        }
+
+        // Rating button logic
+        if(email != ""){
+            // If there is a comment and a rating entered : pass
+            if((comment != "") && (rating_number != 0)){
+                // Capture rating logic here
+                create_rating(rating_number, email)
+                alert("Rating captured succesfully")
+
+            }
+            // If there is something missing
+            else{
+                // if there is nothing entered or there is a comment wiht no rating : fail
+                if((comment == "") && (rating_number == 0) || ((comment != "") && (rating_number == 0))){
+                    alert("Please enter a rating.")
+                }
+                // If there is rating but no comment
+                else{
+                    // Function to see if if they want to add a comment or not
+                    const confirmAction = () => {
+                    const response = confirm("Are you sure you don't want to add any additonal information?");
+                    // If they don't want to capture a comment
+                    if (response) {
+                        // Capture rating logic here
+                        create_rating(rating_number, email)
+                        alert("Rating captured succesfully")
+                    // If they do want to add a comment
+                    } else {
+                        alert("Rating cancelled.");
+                    }
+                    }
+                    // Run the function
+                    confirmAction()
+                    
+                }
+            }
+        }
+        else{
+            alert("Please enter an email to be rated.")
+        }
+    }
+'''
+
 
 # generic Flask app guard
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
