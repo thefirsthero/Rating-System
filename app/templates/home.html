@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            justify-content: center;
+            align-items: center;
+            background-image: url("../static/image.jpg"); 
+            background-size: cover;
+            color: #f5f6f7;
+            font-family: 'Tahoma';
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Button used to open the contact form - fixed at the bottom of the page */
+        .open-button {
+            background-color: #555;
+            color: white;
+            padding: 16px 20px;
+            border: none;
+            cursor: pointer;
+            opacity: 0.8;
+            position: fixed;
+            bottom: 23px;
+            right: 28px;
+            width: 280px;
+        }
+
+        /* The popup form - hidden by default */
+        .form-popup {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            right: 15px;
+            border: 3px solid #f1f1f1;
+            z-index: 9;
+        }
+
+        /* Add styles to the form container */
+        .form-container {
+            max-width: 300px;
+            padding: 10px;
+            background-color: white;
+        }
+
+        /* Full-width input fields */
+        .form-container input[type=text],
+        .form-container input[type=password] {
+            width: 100%;
+            padding: 15px;
+            margin: 5px 0 22px 0;
+            border: none;
+            background: #f1f1f1;
+        }
+
+        /* When the inputs get focus, do something */
+        .form-container input[type=text]:focus,
+        .form-container input[type=password]:focus {
+            background-color: #ddd;
+            outline: none;
+        }
+
+        /* Set a style for the submit/login button */
+        .form-container .btn {
+            background-color: #04AA6D;
+            color: white;
+            padding: 16px 20px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+
+        /* Add a red background color to the cancel button */
+        .form-container .cancel {
+            background-color: red;
+        }
+
+        /* Add some hover effects to buttons */
+        .form-container .btn:hover,
+        .open-button:hover {
+            opacity: 1;
+        }
+    </style>
+    <script type="text/javascript" src="{{ url_for('static', filename = 'hello.js') }}"></script>
+</head>
+
+<body>
+    <h2>Home Page</h2>
+    <p>We'll add the buttons for the users to actually do things here.</p>
+    <p>Might need two separate forms for coaches and coachess, and the logic in the code to redirect them to the different pages</p>
+
+    <button class="open-button" onclick="openForm()">Rate Coach</button>
+
+    <div class="form-popup" id="myForm">
+        <form action="/action_page.php" class="form-container">
+            <h1>Rate Coach</h1>
+
+            <label for="email"><b>Star Rating</b></label>
+            <ul class="rating-group" id="rating-group">
+                <input type="radio" id="star5" name="rating" value="5"/><label id="star" for="star5"><ion-icon name="star"></ion-icon></label>
+                <input type="radio" id="star4" name="rating" value="4"/><label id="star" for="star4"><ion-icon name="star"></ion-icon></label>
+                <input type="radio" id="star3" name="rating" value="3"/><label id="star" for="star3"><ion-icon name="star"></ion-icon></label>
+                <input type="radio" id="star2" name="rating" value="2"/><label id="star" for="star2"><ion-icon name="star"></ion-icon></label>
+                <input type="radio" id="star1" name="rating" value="1"/><label id="star" for="star1"><ion-icon name="star"></ion-icon></label>
+            </ul>
+        
+            <!-- SCRIPTS -->
+            <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+            <!-- ionic icons -->
+            <script type="module" src="https://unpkg.com/ionicons@5.1.2/dist/ionicons/ionicons.esm.js"></script>
+            <script nomodule="" src="https://unpkg.com/ionicons@5.1.2/dist/ionicons/ionicons.js"></script>
+            <!-- javascript -->
+            <script src="app.js"></script>
+
+            <label for="psw"><b>Additional Comments</b></label>
+            <input type="text" placeholder="Enter any additional comments" id="text1" required>
+
+            <button type="button" class="btn cancel" onclick="closeForm()">Add</button>
+        </form>
+    </div>
+
+    <script>
+        function openForm() {
+            document.getElementById("myForm").style.display = "block";
+        }
+
+        function closeForm() {
+            // Getting user inputted values from form
+            document.getElementById("myForm").style.display = "none";
+            star1 = document.getElementById("star1")
+            star2 = document.getElementById("star2")
+            star3 = document.getElementById("star3")
+            star4 = document.getElementById("star4")
+            star5 = document.getElementById("star5")
+            comment = document.getElementById("text1").value
+
+            // Checking which star rating was given
+            rating_number = 0
+            if(star1.checked) {
+                rating_number = 1
+            }else if(star2.checked) {
+                rating_number = 2
+            }else if(star3.checked) {
+                rating_number = 3
+            }else if(star4.checked) {
+                rating_number = 4
+            }else if(star5.checked) {
+                rating_number = 5
+            }
+
+            // Rating button logic
+            // If there is a comment and a rating entered : pass
+            if((comment != "") && (rating_number != 0)){
+                // Capture rating logic here
+                alert("Rating captured succesfully")
+
+            }
+            // If there is something missing
+            else{
+                // if there is nothing entered or there is a comment wiht no rating : fail
+                if((comment == "") && (rating_number == 0) || ((comment != "") && (rating_number == 0))){
+                    alert("Please enter a rating.")
+                }
+                // If there is rating but no comment
+                else{
+                    // Function to see if if they want to add a comment or not
+                    const confirmAction = () => {
+                    const response = confirm("Are you sure you don't want to add any additonal information?");
+                    // If they don't want to capture a comment
+                    if (response) {
+                        // Capture rating logic here
+                        alert("Rating captured succesfully")
+                    // If they do want to add a comment
+                    } else {
+                        alert("Rating cancelled.");
+                    }
+                    }
+                    // Run the function
+                    confirmAction()
+                    
+                }
+            }
+        }
+    </script>
+
+</body>
+
+</html>
