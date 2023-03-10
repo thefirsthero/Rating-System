@@ -36,6 +36,7 @@ try:
     dbs = cur.execute('create table rating(rating_id int not null auto_increment,coach_id_fk int,coachee_id_fk int,avg_rating float not null,coach_rated bool,primary key(rating_id));')
     dbs = cur.execute('Alter table rating add constraint coach_fk foreign key (coach_id_fk) references coach(coach_id);')
     dbs = cur.execute('Alter table rating add constraint coachee_fk foreign key (coachee_id_fk) references coachee(coachee_id);')
+    print("==============> ALL TABLES CREATED SUCCESSFULLY <==============")
 except:
     myconn.rollback()
 
