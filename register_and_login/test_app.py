@@ -18,9 +18,16 @@ logging.WARNING
 logging.ERROR
 logging.CRITICAL
 '''
-# logging configurtion
+
+# create or get logger
+logger = logging.getLogger(__name__)
+
+#set log level
+logger.setLevel(logging.WARNING)
+ 
+# logging configuration
 logging.basicConfig(filename='log/record.log',
-                level=logging.DEBUG, format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
+                    format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
 # create Flask app
 app = Flask(__name__)
