@@ -73,9 +73,9 @@ def landingPage():
 # login page
 
 
-@app.route('/success')
+@app.route('/home')
 def success():
-    return render_template('success.html')
+    return render_template('home.html')
 
 
 @app.route('/login', methods=["GET", "POST"])
