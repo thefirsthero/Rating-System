@@ -37,7 +37,6 @@ app.secret_key = "REDACTED"
 
 
 def get_credentials_tuple(email):
-    UserType = None
     myconn = mysql.connector.connect(host=os.getenv('HOST'), user=os.getenv(
         'USER'), passwd=os.getenv('PASSWD'), database=os.getenv('DATABASE'))
 
@@ -59,14 +58,18 @@ def get_credentials_tuple(email):
 
     myconn.close()
 
+    # They have not registered
     if ((myresult1 == None) and (myresult2 == None)):
-        print('1')
         return myresult1
+    # They are a coach
     elif ((myresult1 != None) and (myresult2 == None)):
-        print('1')
+        # store user type in a cookie
+        session['user_type'] = 'coach'
         return myresult1
+    # They are a coachee
     elif ((myresult1 == None) and (myresult2 != None)):
-        print('1')
+        # store user type in a cookie
+        session['user_type'] = 'coachee'
         return myresult2
 
 def ifEmailExists(email):
@@ -105,6 +108,8 @@ def landingPage():
 def success():
     return render_template('home.html')
 
+def create_rating():
+    pass
 
 @app.route('/login', methods=["GET", "POST"])
 def login():
@@ -119,24 +124,21 @@ def login():
         if my_tuple != None:
             # check if the password entered matches up to the hashed password in the database
             if check_password_hash(my_tuple[1], login_password):
-                # print(f"Login of {login_email} is valid!")
 
                 # store login information on a cookie
                 session['email'] = login_email
+
                 logger.warning('Logged in Succesfully!')
                 return redirect(url_for('success'))
             else:
-
                 # failed login
-                
-                # print(f'Login of {login_email} is invalid!')
                 logger.warning('Incorrect password, try again!')
                 return render_template('login.html', error_msg = "Incorrect password, try again.")
         else:
+            # failed login
             logger.warning('User has not registered yet!')
             return render_template("login.html", error_msg = "User has not registered yet")
-            # failed login
-            # print('User has not registered yet!')
+            
 
     return render_template('login.html')
 
