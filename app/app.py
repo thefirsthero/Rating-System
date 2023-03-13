@@ -211,9 +211,17 @@ def register():
 
     return render_template('register.html')
 
-@app.route('/go_to_rating')
-def go_to_rating():
+@app.route('/go_to_create_rating')
+def go_to_create_rating():
     return render_template('rating.html')
+
+@app.route('/go_to_view_ratings_recieved')
+def go_to_view_ratings_recieved():
+    return render_template('home.html')
+
+@app.route('/go_to_view_ratings_given')
+def go_to_view_ratings_given():
+    return render_template('home.html')
 
 @app.route('/create_rating')
 def create_rating():
