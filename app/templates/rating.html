@@ -1,175 +1,221 @@
-<!DOCTYPE html>
-<html>
-
-<head>
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Bootstrap CSS -->
     <style>
-                body {
-            background: #f1f1f1;
-        }
-        body h1 {
-        font-family: 'Roboto Slab', serif;
-            margin: 50px 20px 40px;
-            font-size: 50px;
-            letter-spacing: 0.5px;
-            color: #999;
-            text-align: center;
-        }
-        .rating {
-            width: 208px;
-            height: 40px;
-            margin: 0 auto;
-            padding: 40px 50px;
-            border: 1px solid #ccc;
-            background: #f9f9f9;
-        }
-        .rating label {
-            float: right;
-            position: relative;
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-        }
-        .rating label:not(:first-of-type) {
-            padding-right: 2px;
-        }
-        .rating label:before {
-            content: "\2605";
-            font-size: 42px;
-            color: #ccc;
-            line-height: 1;
-        }
-        .rating input {
-            display: none;
-        }
-        .rating input:checked ~ label:before, .rating:not(:checked) > label:hover:before, .rating:not(:checked) > label:hover ~ label:before {
-            color: #f9df4a;
-        }
-        body {
-            justify-content: center;
-            align-items: center;
-            background-image: url("../static/image.jpg"); 
-            background-size: cover;
-            color: #f5f6f7;
-            font-family: 'Tahoma';
-            font-size: 16px;
-            font-weight: bold;
-        }
+    body {
+        justify-content: center;
+        align-items: center;
+        background-image: url("../static/image.jpg");
+        background-size: cover;
+        color: #f5f6f7;
+        font-family: 'Tahoma';
+        font-size: 16px;
+        font-weight: bold;
 
-        * {
-            box-sizing: border-box;
-        }
+    }
 
-        /* Button used to open the contact form - fixed at the bottom of the page */
-        .open-button {
-            background-color: #555;
-            color: white;
-            padding: 16px 20px;
-            border: none;
-            cursor: pointer;
-            opacity: 0.8;
-            position: fixed;
-            bottom: 23px;
-            right: 28px;
-            width: 280px;
-        }
+    h1 {
+        margin: 1em auto;
+        text-align: center;
+        text-decoration-line: underline;
+        font-weight: bolder;
 
-        /* The popup form - hidden by default */
-        .form-popup {
-            display: none;
-            position: fixed;
-            bottom: 0;
-            right: 15px;
-            border: 3px solid #f1f1f1;
-            z-index: 9;
-        }
+    }
 
-        /* Add styles to the form container */
-        .form-container {
-            max-width: 300px;
-            padding: 10px;
-            background-color: white;
-        }
+    h2 {
+        margin: 1em auto;
+        text-align: center;
+        font-weight: bolder;
+        color: red;
+    }
 
-        /* Full-width input fields */
-        .form-container input[type=text],
-        .form-container input[type=password] {
-            width: 100%;
-            padding: 15px;
-            margin: 5px 0 22px 0;
-            border: none;
-            background: #f1f1f1;
-        }
+    p {
+        margin: 1em auto;
+        text-align: center;
+        text-decoration-line: underline;
+        font-weight: bolder;
 
-        /* When the inputs get focus, do something */
-        .form-container input[type=text]:focus,
-        .form-container input[type=password]:focus {
-            background-color: #ddd;
-            outline: none;
-        }
 
-        /* Set a style for the submit/login button */
-        .form-container .btn {
-            background-color: #04AA6D;
-            color: white;
-            padding: 16px 20px;
-            border: none;
-            cursor: pointer;
-            width: 100%;
-            margin-bottom: 10px;
-            opacity: 0.8;
-        }
+    }
 
-        /* Add a red background color to the cancel button */
-        .form-container .cancel {
-            background-color: red;
-        }
+    form {
+        margin: 0 auto;
+        max-width: 500px;
+        min-width: 300px;
+        width: 60vw;
+        padding-bottom: 2em;
 
-        /* Add some hover effects to buttons */
-        .form-container .btn:hover,
-        .open-button:hover {
-            opacity: 1;
-        }
-        .checked {
-        color: orange;
-        }
+    }
+
+    fieldset {
+        border-color: #ff0cff;
+        border-style: dashed;
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+        padding-left: 0;
+        padding-right: 0;
+
+    }
+
+    label {
+
+        display: block;
+        width: fit-content;
+        margin-left: 5px;
+    }
+
+    input {
+        width: 96.7%;
+        margin-top: 10px;
+        margin-bottom: 0;
+        margin-right: 0;
+        margin-left: 5px;
+        background-color: #D9D9D9;
+        border: 1px solid;
+        min-height: 0.7em;
+    }
+
+    button {
+        display: inline-block;
+        width: 20%;
+        font-size: medium;
+
+    }
+    .content_div{
+        color: rgb(255, 255, 255);
+        background-color: rgba(34, 18, 39, 0.5);
+        background-size:contain;
+        width: 525px;
+        margin:auto;
+        border: 5px;
+        border-width: 4px;
+        border-color: coral;
+        margin-top: 150px;
+    }
+    .content_5_star_inner{
+        border: solid 1px green;
+        background-color: green;
+        color: transparent;
+        font-size: 5px;
+        border-radius: 5px;
+        width: 0%;
+    }
+    .content_5_star_outer{
+        /*border: solid 1px grey;*/
+        background-color: lightgrey;
+        color: transparent;
+        font-size: 5px;
+        border-radius: 5px;
+    }
+    .content_4_star_inner{
+        border: solid 1px green;
+        background-color: green;
+        color: transparent;
+        font-size: 5px;
+        border-radius: 5px;
+        width: 0%;
+    }
+    .content_4_star_outer{
+        /*border: solid 1px grey;*/
+        background-color: lightgrey;
+        color: transparent;
+        font-size: 5px;
+        border-radius: 5px;
+    }
+    .content_3_star_inner{
+        border: solid 1px green;
+        background-color: green;
+        color: transparent;
+        font-size: 5px;
+        border-radius: 5px;
+        width: 0%;
+    }
+    .content_3_star_outer{
+        /*border: solid 1px grey;*/
+        background-color: lightgrey;
+        color: transparent;
+        font-size: 5px;
+        border-radius: 5px;
+    }
+    .content_2_star_inner{
+        border: solid 1px green;
+        background-color: green;
+        color: transparent;
+        font-size: 5px;
+        border-radius: 5px;
+        width: 0%;
+    }
+    .content_2_star_outer{
+        /*border: solid 1px grey;*/
+        background-color: lightgrey;
+        color: transparent;
+        font-size: 5px;
+        border-radius: 5px;
+    }
+    .content_1_star_inner{
+        border: solid 1px green;
+        background-color: green;
+        color: transparent;
+        font-size: 5px;
+        border-radius: 5px;
+        width: 0%;
+    }
+    .content_1_star_outer{
+        /*border: solid 1px grey;*/
+        background-color: lightgrey;
+        color: transparent;
+        font-size: 5px;
+        border-radius: 5px;
+    }
     </style>
+
+    <title>Star Rating Example</title>
     <script type="text/javascript" src="{{ url_for('static', filename = 'hello.js') }}"></script>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://kit.fontawesome.com/070428bd88.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="style.css">
-    <title>Feedback Form | ATM </title>
-</head>
-
-<body>
-    <div class="container">
-        <div class="review__section">
-          <strong>Rate your experience</strong>
-          <p class="review__title"></p>
-        </div>
-        <div class="review__section">
-          <span class="review__emoji">&#127773</span>
-          <div class="reviewStars">
-            <span data-rating="1"><i class="far fa-star"></i></span>
-            <span data-rating="2"><i class="far fa-star"></i></span>
-            <span data-rating="3"><i class="far fa-star"></i></span>
-            <span data-rating="4"><i class="far fa-star"></i></span>
-            <span data-rating="5"><i class="far fa-star"></i></span>
-          </div>
-        </div>
+  </head>
+  <body>
+    <div class="content_div">
+      <h1 class="text-center" style="text-decoration: underline;">Create a Rating</h1>
+      {% for message in get_flashed_messages() %}
+        <h2>{{ message }}</h2>
+        {% endfor %}
+      <p class="text-center mt-3">Choose a star and enter a comment; Leave stars blank for 0 stars!</p>
+      <div class="text-center">
+        {% for i in range(5) %}
+						<img src="{{ url_for('static',filename='images/rating.png') }}" width="50" height="50" id="star_{{i}}">
+					{% endfor %}
+					&nbsp;&nbsp;<img class="mt-2" id="ratings" src="{{ url_for('static', filename='images/neutral.png') }}" width="60" height="50">
       </div>
-      <h2></h2>Email:<br>
-        <input type="text" name='email'><br>
-  
-    <script src="static/main.js"></script>
+      <div class="text-center">
+        <form method='POST' action="create_rating">
+          <fieldset>
+          <input type="hidden" id="rating_content" name='rating' value='0'><br>
+          <label for="email">Enter Email:</label>
+          <input type="email" id="email1" name="email" value="" required><br><br>
+          <label for="comment">Enter Comment:</label>
+          <input type="text" id="comment1" name="comment" value=""><br><br>
+          </fieldset>
+          <input type="submit" id="submitbtn" class="btn btn-primary mt-2" value="Submit my Rating">
+        </form>
+    </div>
 
-    <button onclick="window.location.href='create_rating';">
-        Submit
-      </button>
-
-</body>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    
+    <script src="{{ url_for('static',filename='js/rating.js') }}"></script>
+    <!-- <script>
+      starBars(
+        five_stars = '{{five_stars}}',
+        four_stars = '{{four_stars}}',
+        three_stars = '{{three_stars}}',
+        two_stars = '{{two_stars}}',
+        one_star = '{{one_star}}',
+        total_votes = '{{count}}'
+      )
+    </script> -->
+  </body>
 </html>

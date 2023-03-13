@@ -223,64 +223,98 @@ def go_to_view_ratings_recieved():
 def go_to_view_ratings_given():
     return render_template('home.html')
 
-@app.route('/create_rating')
+@app.route('/create_rating',methods=['GET','POST'])
 def create_rating():
-    print('I am called')
     # TODO: REMOVE THESE HARDCODED VALUES
-    rating = 2
-    email = 'test@gmail.com'
-    # email = request.form['email']
-    # rating_num = request.form['reviewStars']
-    # print(rating_num)
+    rating = -1
+    email = '-1'
 
-    print('I am called')
-    # Initialise mysql
-    myconn = mysql.connector.connect(host=os.getenv('HOST'), user=os.getenv(
-                'USER'), passwd=os.getenv('PASSWD'), database=os.getenv('DATABASE'))
+    if request.method == 'POST':
+        if 'rating' in request.form:
+            content = int(request.form['rating'])
+            # if content:
+            #     if content == 5:
+            #         rating == 5
+            #     elif content == 4:
+            #         rating == 4
+            #     elif content == 3:
+            #         rating == 3
+            #     elif content == 2:
+            #         rating == 2                  
+            #     elif content == 1:
+            #         rating == 1
+            rating = content
 
-    cur = myconn.cursor()
-
-    # getting coachID or coacheeID for rater
-    raterID = None
-    if session['user_type'] == 'coach':
-        query = 'SELECT coach_id FROM coach WHERE coach_email = "' + session['email'] + '";'
-        cur.execute(query)
-        raterID = cur.fetchone()[0]
-
-        # get ratee id
-        query = 'SELECT coachee_id FROM coachee WHERE coachee_email = "' + email + '";'
-        cur.execute(query)
-        rateeID = cur.fetchone()[0]
-    else:
-        query = 'SELECT coachee_id FROM coachee WHERE coachee_email = "' + session['email'] + '";'
-        cur.execute(query)
-        raterID = cur.fetchone()[0]
-
-        # get ratee id
-        query = 'SELECT coach_id FROM coach WHERE coach_email = "' + email + '";'
-        cur.execute(query)
-        rateeID = cur.fetchone()[0]
-
-    # Populate table
-    try:
-            
-        query = 'INSERT INTO rating (coach_id_fk, coachee_id_fk, rating, register_date) VALUES (%s, %s, %s, %s)'
-        val = [(raterID, rateeID, rating, datetime.now(pytz.utc))]
-        cur.executemany(query, val)
-
-        myconn.commit()
-
+        if 'email' in request.form:
+            content = request.form['email']
+            email = content
         
-    except:
-        # print(query)
-        # print(type(raterID))
-        # print(type(rateeID))
-        # print(type(rating))
-        myconn.rollback()
+        if 'comment' in request.form:
+            content = request.form['comment']
+            comment = content
+        # email = request.form['email']
+        # rating_num = request.form['reviewStars']
+        # print(rating_num)
 
-    myconn.close()
+        # Initialise mysql
+        myconn = mysql.connector.connect(host=os.getenv('HOST'), user=os.getenv(
+                    'USER'), passwd=os.getenv('PASSWD'), database=os.getenv('DATABASE'))
 
-    return render_template('home.html')
+        cur = myconn.cursor()
+
+        # getting coachID or coacheeID for rater
+        raterID = None
+        if session['user_type'] == 'coach':
+            print("You're a coach:", session['email'])
+            query = 'SELECT coach_id FROM coach WHERE coach_email = "' + session['email'] + '";'
+            cur.execute(query)
+            raterID = cur.fetchone()[0]
+            print(raterID)
+
+            # get ratee id
+            query = 'SELECT coachee_id FROM coachee WHERE coachee_email = "' + email + '";'
+            cur.execute(query)
+            rateeID = cur.fetchone()[0]
+            print(rateeID)
+        else:
+            print("You're a coachee:", session['email'])
+            print(email)
+            query = 'SELECT coachee_id FROM coachee WHERE coachee_email = "' + session['email'] + '";'
+            cur.execute(query)
+            raterID = cur.fetchone()[0]
+            print(raterID)
+
+            # get ratee id
+            query = 'SELECT coach_id FROM coach WHERE coach_email = "' + email + '";'
+            cur.execute(query)
+            rateeID = cur.fetchone()[0]
+            print(rateeID)
+
+        # Populate table
+        try:
+                
+            query = 'INSERT INTO rating (coach_id_fk, coachee_id_fk, rating, comment, register_date) VALUES (%s, %s, %s, %s, %s)'
+            val = [(raterID, rateeID, rating, comment,datetime.now(pytz.utc))]
+            cur.executemany(query, val)
+
+            myconn.commit()
+
+            
+        except:
+            # print(query)
+            # print(type(raterID))
+            # print(type(rateeID))
+            # print(type(rating))
+            myconn.rollback()
+
+        myconn.close()
+
+        return redirect(url_for('success'))
+    else:
+        # Failed rating
+        flash('Failed to create rating, pleae try again!')
+        logger.warning('Email already registered, please log in!')
+        return render_template('rating.html')
 '''
 function closeForm() {
         // Getting user inputted values from form
