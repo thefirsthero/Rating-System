@@ -194,8 +194,16 @@
         <form method='POST' action="create_rating">
           <fieldset>
           <input type="hidden" id="rating_content" name='rating' value='0'><br>
-          <label for="email">Enter Email:</label>
-          <input type="email" id="email1" name="email" value="" required><br><br>
+          <!-- dropdown email selection -->
+          <p style="font-family:verdana">
+            Choose Email of Ratee:<SELECT name="emailid" style="font-family:verdana">
+            {% for j in emaillist %}
+                <OPTION value={{j[0]}}>{{j[1]}}</OPTION>
+            {% endfor %}
+            </SELECT>
+            </p>
+          <!-- <label for="email">Enter Email:</label>
+          <input type="email" id="email1" name="email" value="" required><br><br> -->
           <label for="comment">Enter Comment:</label>
           <input type="text" id="comment1" name="comment" value=""><br><br>
           </fieldset>

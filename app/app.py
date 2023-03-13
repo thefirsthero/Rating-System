@@ -212,7 +212,22 @@ def register():
 
 @app.route('/go_to_create_rating')
 def go_to_create_rating():
-    return render_template('rating.html')
+    # get opposite user type
+    if session['user_type'] == 'coach':
+        opposite_user_type = 'coachee'
+    else:
+        opposite_user_type = 'coach'
+    
+    # create a connection
+    myconn = mysql.connector.connect(host=os.getenv('HOST'), user=os.getenv(
+                'USER'), passwd=os.getenv('PASSWD'), database=os.getenv('DATABASE'))
+    #create a cursor
+    cursor = myconn.cursor() 
+    #execute select statement to fetch data to be displayed in combo/dropdown
+    cursor.execute('SELECT ' + opposite_user_type + '_email FROM ' + opposite_user_type) 
+    #fetch all rows ans store as a set of tuples 
+    emaillist = cursor.fetchall() 
+    return render_template('rating.html', emaillist=emaillist)
 
 @app.route('/go_to_view_ratings_recieved')
 def go_to_view_ratings_recieved():
@@ -244,9 +259,10 @@ def create_rating():
             #         rating == 1
             rating = content
 
-        if 'email' in request.form:
-            content = request.form['email']
+        if 'emailid' in request.form:
+            content = request.form['emailid']
             email = content
+            print(email)
         
         if 'comment' in request.form:
             content = request.form['comment']
@@ -258,9 +274,13 @@ def create_rating():
 
         cur = myconn.cursor()
 
+        # declare coach rated boolean as false
+        coach_rated = False
+
         # getting coachID or coacheeID for rater
         raterID = None
         if session['user_type'] == 'coach':
+            # if rater is a coach
             query = 'SELECT coach_id FROM coach WHERE coach_email = "' + session['email'] + '";'
             cur.execute(query)
             raterID = cur.fetchone()[0]
@@ -270,7 +290,11 @@ def create_rating():
             cur.execute(query)
             rateeID = cur.fetchone()[0]
 
+            # set coach_rated boolean to True
+            coach_rated = True
+
         else:
+            # if rater is a coachee
             query = 'SELECT coachee_id FROM coachee WHERE coachee_email = "' + session['email'] + '";'
             cur.execute(query)
             raterID = cur.fetchone()[0]
@@ -283,8 +307,8 @@ def create_rating():
         # Populate table
         try:
                 
-            query = 'INSERT INTO rating (coach_id_fk, coachee_id_fk, rating, comment, register_date) VALUES (%s, %s, %s, %s, %s)'
-            val = [(raterID, rateeID, rating, comment,datetime.now(pytz.utc))]
+            query = 'INSERT INTO rating (coach_id_fk, coachee_id_fk, rating, rating_comment, coach_rated, coachee_rated, register_date) VALUES (%s, %s, %s, %s, %s, %s, %s)'
+            val = [(raterID, rateeID, rating, comment, coach_rated, (not coach_rated),datetime.now(pytz.utc))]
             cur.executemany(query, val)
 
             myconn.commit()
