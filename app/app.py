@@ -180,7 +180,6 @@ def register():
             userType = 'coachee'
 
         emailExists = ifEmailExists(textEmail)
-        # print(emailExists)
 
         # check if the username exists in the db yet
         if emailExists == False:
@@ -252,9 +251,6 @@ def create_rating():
         if 'comment' in request.form:
             content = request.form['comment']
             comment = content
-        # email = request.form['email']
-        # rating_num = request.form['reviewStars']
-        # print(rating_num)
 
         # Initialise mysql
         myconn = mysql.connector.connect(host=os.getenv('HOST'), user=os.getenv(
@@ -265,30 +261,24 @@ def create_rating():
         # getting coachID or coacheeID for rater
         raterID = None
         if session['user_type'] == 'coach':
-            print("You're a coach:", session['email'])
             query = 'SELECT coach_id FROM coach WHERE coach_email = "' + session['email'] + '";'
             cur.execute(query)
             raterID = cur.fetchone()[0]
-            print(raterID)
 
             # get ratee id
             query = 'SELECT coachee_id FROM coachee WHERE coachee_email = "' + email + '";'
             cur.execute(query)
             rateeID = cur.fetchone()[0]
-            print(rateeID)
+
         else:
-            print("You're a coachee:", session['email'])
-            print(email)
             query = 'SELECT coachee_id FROM coachee WHERE coachee_email = "' + session['email'] + '";'
             cur.execute(query)
             raterID = cur.fetchone()[0]
-            print(raterID)
 
             # get ratee id
             query = 'SELECT coach_id FROM coach WHERE coach_email = "' + email + '";'
             cur.execute(query)
             rateeID = cur.fetchone()[0]
-            print(rateeID)
 
         # Populate table
         try:
@@ -301,10 +291,6 @@ def create_rating():
 
             
         except:
-            # print(query)
-            # print(type(raterID))
-            # print(type(rateeID))
-            # print(type(rating))
             myconn.rollback()
 
         myconn.close()
