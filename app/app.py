@@ -303,8 +303,6 @@ def create_rating():
             cur.execute(query)
             rateeID = cur.fetchone()[0]
 
-        print(raterID)
-        print(rateeID)
         # Populate table
         # A coach has been rated
         if coach_rated:
