@@ -262,7 +262,6 @@ def create_rating():
         if 'emailid' in request.form:
             content = request.form['emailid']
             email = content
-            print(email)
         
         if 'comment' in request.form:
             content = request.form['comment']
@@ -274,8 +273,8 @@ def create_rating():
 
         cur = myconn.cursor()
 
-        # declare coach rated boolean as false
-        coach_rated = False
+        # declare coach rated boolean as True
+        coach_rated = True
 
         # getting coachID or coacheeID for rater
         raterID = None
@@ -290,8 +289,8 @@ def create_rating():
             cur.execute(query)
             rateeID = cur.fetchone()[0]
 
-            # set coach_rated boolean to True
-            coach_rated = True
+            # set coach_rated boolean to False
+            coach_rated = False
 
         else:
             # if rater is a coachee
@@ -304,26 +303,46 @@ def create_rating():
             cur.execute(query)
             rateeID = cur.fetchone()[0]
 
+        print(raterID)
+        print(rateeID)
         # Populate table
-        try:
+        # A coach has been rated
+        if coach_rated:
+            try:
+                    
+                query = 'INSERT INTO rating (coach_id_fk, coachee_id_fk, star_rating, rating_comment, coach_rated, coachee_rated, register_date) VALUES (%s, %s, %s, %s, %s, %s, %s)'
+                val = [(rateeID, raterID, rating, comment, coach_rated, (not coach_rated),datetime.now(pytz.utc))]
+                cur.executemany(query, val)
+
+                myconn.commit()
+
                 
-            query = 'INSERT INTO rating (coach_id_fk, coachee_id_fk, rating, rating_comment, coach_rated, coachee_rated, register_date) VALUES (%s, %s, %s, %s, %s, %s, %s)'
-            val = [(raterID, rateeID, rating, comment, coach_rated, (not coach_rated),datetime.now(pytz.utc))]
-            cur.executemany(query, val)
+            except:
+                myconn.rollback()
 
-            myconn.commit()
+            myconn.close()
+            # A coachee has been rated
+        else:
+            try:
+                    
+                query = 'INSERT INTO rating (coach_id_fk, coachee_id_fk, star_rating, rating_comment, coach_rated, coachee_rated, register_date) VALUES (%s, %s, %s, %s, %s, %s, %s)'
+                val = [(raterID, rateeID, rating, comment, coach_rated, (not coach_rated),datetime.now(pytz.utc))]
+                cur.executemany(query, val)
 
-            
-        except:
-            myconn.rollback()
+                myconn.commit()
 
-        myconn.close()
+                
+            except:
+                myconn.rollback()
+
+            myconn.close()
+
 
         return redirect(url_for('success'))
     else:
         # Failed rating
         flash('Failed to create rating, pleae try again!')
-        logger.warning('Email already registered, please log in!')
+        logger.warning('Failed to create rating, pleae try again!')
         return render_template('rating.html')
 '''
 function closeForm() {
