@@ -172,42 +172,59 @@
         font-size: 5px;
         border-radius: 5px;
     }
+    th, td {
+        border:1px solid white;
+        top: 50%;
+    }
+    table {
+    border:1px solid white;
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    }
+    .div-3 {
+    background-color: transparent; 
+    height: 200px;
+    width: 200px;
+    }
     </style>
 
-    <title>Create Rating</title>
+    <title>Ratings Received</title>
     <script type="text/javascript" src="{{ url_for('static', filename = 'hello.js') }}"></script>
   </head>
   <body>
-    <div class="content_div">
-      <h1 class="text-center" style="text-decoration: underline;">Create a Rating</h1>
-      {% for message in get_flashed_messages() %}
-        <h2>{{ message }}</h2>
-        {% endfor %}
-      <p class="text-center mt-3">Choose a star and enter a comment; Leave stars blank for 0 stars!</p>
+    <div class="div-3"></div>
       <div class="text-center">
-        {% for i in range(5) %}
-						<img src="{{ url_for('static',filename='images/rating.png') }}" width="50" height="50" id="star_{{i}}">
-					{% endfor %}
-					&nbsp;&nbsp;<img class="mt-2" id="ratings" src="{{ url_for('static', filename='images/neutral.png') }}" width="60" height="50">
-      </div>
-      <div class="text-center">
-        <form method='POST' action="create_rating">
-          <fieldset>
-          <input type="hidden" id="rating_content" name='rating' value='0'><br>
+        <form method='POST' action="view_rating_received">
+            <p>
+                <!-- Display the average rating -->
+                View Average Rating: {{avg_rating}}
+
+            </p>
           <!-- dropdown email selection -->
-          <p>
-            Choose Email of Ratee:<SELECT name="emailid" style="font-family:verdana">
-            {% for j in emaillist %}
+          <!-- <p>
+            View Ratings Received:<SELECT name="commentid" style="font-family:verdana">
+            {% for j in commentlist %}
                 <OPTION value={{j[0]}}>{{j[0]}}</OPTION>
             {% endfor %}
             </SELECT>
-            </p>
+            </p> -->
+            <div class="tableFixHead">
+                <table id="commentsid" style="width:100%">
+                    <tr>
+                        <th>Comments</th>
+                        <th>Ratings</th>
+                    </tr>
+                  {% for comment, rating in commentlist %}
+                  <tr>
+                    <td>{{ comment }}</td>
+                    <td>{{ rating }}</td>
+                  </tr>
+                  {% endfor %}
+                </table>
+              </div>
           <!-- <label for="email">Enter Email:</label>
           <input type="email" id="email1" name="email" value="" required><br><br> -->
-          <label for="comment">Enter Comment:</label>
-          <input type="text" id="comment1" name="comment" value=""><br><br>
-          </fieldset>
-          <input type="submit" id="submitbtn" class="btn btn-primary mt-2" value="Submit my Rating">
         </form>
     </div>
 
