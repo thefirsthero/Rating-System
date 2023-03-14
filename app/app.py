@@ -231,32 +231,58 @@ def go_to_create_rating():
 
 @app.route('/go_to_view_ratings_recieved')
 def go_to_view_ratings_recieved():
-    return render_template('home.html')
+    # get opposite user type
+    if session['user_type'] == 'coach':
+        opposite_user_type = 'coachee'
+    else:
+        opposite_user_type = 'coach'
+    
+    # Initialise mysql
+    myconn = mysql.connector.connect(host=os.getenv('HOST'), user=os.getenv(
+                'USER'), passwd=os.getenv('PASSWD'), database=os.getenv('DATABASE'))
+
+    cur = myconn.cursor()
+    
+    # Get their id form db
+    their_id = None
+    coach_rated = False
+    if session['user_type'] == 'coach':
+        # if they are a coach
+        query = 'SELECT coach_id FROM coach WHERE coach_email = "' + session['email'] + '";'
+        cur.execute(query)
+        their_id = cur.fetchone()[0]
+        # updating coach_rated boolean
+        coach_rated = True
+    else:
+        # get ratee id
+        query = 'SELECT coachee_id FROM coachee WHERE coachee_email = "' + session['email'] + '";'
+        cur.execute(query)
+        their_id = cur.fetchone()[0]
+    
+    # create a connection
+    myconn = mysql.connector.connect(host=os.getenv('HOST'), user=os.getenv(
+                'USER'), passwd=os.getenv('PASSWD'), database=os.getenv('DATABASE'))
+    #create a cursor
+    cursor = myconn.cursor() 
+    #execute select statement to fetch data to be displayed in combo/dropdown
+    cursor.execute('SELECT rating_comment, star_rating FROM rating WHERE (' + session['user_type'] +'_id_fk = "' + str(their_id) + '") AND (coach_rated = '+str(coach_rated)+')') 
+    #fetch all rows ans store as a set of tuples 
+    commentlist = cursor.fetchall() 
+    return render_template('view_rating_received.html', commentlist=commentlist)
 
 @app.route('/go_to_view_ratings_given')
 def go_to_view_ratings_given():
     return render_template('home.html')
 
+# logic to create a rating
 @app.route('/create_rating',methods=['GET','POST'])
 def create_rating():
-    # TODO: REMOVE THESE HARDCODED VALUES
     rating = -1
     email = '-1'
 
     if request.method == 'POST':
         if 'rating' in request.form:
             content = int(request.form['rating'])
-            # if content:
-            #     if content == 5:
-            #         rating == 5
-            #     elif content == 4:
-            #         rating == 4
-            #     elif content == 3:
-            #         rating == 3
-            #     elif content == 2:
-            #         rating == 2                  
-            #     elif content == 1:
-            #         rating == 1
             rating = content
 
         if 'emailid' in request.form:
@@ -342,75 +368,89 @@ def create_rating():
         flash('Failed to create rating, pleae try again!')
         logger.warning('Failed to create rating, pleae try again!')
         return render_template('rating.html')
-'''
-function closeForm() {
-        // Getting user inputted values from form
-        document.getElementById("myForm").style.display = "none";
-        star1 = document.getElementById("star1")
-        star2 = document.getElementById("star2")
-        star3 = document.getElementById("star3")
-        star4 = document.getElementById("star4")
-        star5 = document.getElementById("star5")
-        email = document.getElementById("text2").value
-        comment = document.getElementById("text1").value
 
-        // Checking which star rating was given
-        rating_number = 0
-        if(star1.checked) {
-            rating_number = 1
-        }else if(star2.checked) {
-            rating_number = 2
-        }else if(star3.checked) {
-            rating_number = 3
-        }else if(star4.checked) {
-            rating_number = 4
-        }else if(star5.checked) {
-            rating_number = 5
-        }
+# logic to view received ratings
+@app.route('/view_rating_received',methods=['GET','POST'])
+def view_rating_received():
+    email = session['email']
 
-        // Rating button logic
-        if(email != ""){
-            // If there is a comment and a rating entered : pass
-            if((comment != "") && (rating_number != 0)){
-                // Capture rating logic here
-                create_rating(rating_number, email)
-                alert("Rating captured succesfully")
+    if request.method == 'GET':
 
-            }
-            // If there is something missing
-            else{
-                // if there is nothing entered or there is a comment wiht no rating : fail
-                if((comment == "") && (rating_number == 0) || ((comment != "") && (rating_number == 0))){
-                    alert("Please enter a rating.")
-                }
-                // If there is rating but no comment
-                else{
-                    // Function to see if if they want to add a comment or not
-                    const confirmAction = () => {
-                    const response = confirm("Are you sure you don't want to add any additonal information?");
-                    // If they don't want to capture a comment
-                    if (response) {
-                        // Capture rating logic here
-                        create_rating(rating_number, email)
-                        alert("Rating captured succesfully")
-                    // If they do want to add a comment
-                    } else {
-                        alert("Rating cancelled.");
-                    }
-                    }
-                    // Run the function
-                    confirmAction()
+        # Initialise mysql
+        myconn = mysql.connector.connect(host=os.getenv('HOST'), user=os.getenv(
+                    'USER'), passwd=os.getenv('PASSWD'), database=os.getenv('DATABASE'))
+
+        cur = myconn.cursor()
+
+        # declare coach rated boolean as True
+        coach_rated = True
+
+        # getting coachID or coacheeID for rater
+        raterID = None
+        if session['user_type'] == 'coach':
+            # if rater is a coach
+            query = 'SELECT coach_id FROM coach WHERE coach_email = "' + session['email'] + '";'
+            cur.execute(query)
+            raterID = cur.fetchone()[0]
+
+            # get ratee id
+            query = 'SELECT coachee_id FROM coachee WHERE coachee_email = "' + email + '";'
+            cur.execute(query)
+            rateeID = cur.fetchone()[0]
+
+            # set coach_rated boolean to False
+            coach_rated = False
+
+        else:
+            # if rater is a coachee
+            query = 'SELECT coachee_id FROM coachee WHERE coachee_email = "' + session['email'] + '";'
+            cur.execute(query)
+            raterID = cur.fetchone()[0]
+
+            # get ratee id
+            query = 'SELECT coach_id FROM coach WHERE coach_email = "' + email + '";'
+            cur.execute(query)
+            rateeID = cur.fetchone()[0]
+
+        # Populate table
+        # A coach has been rated
+        if coach_rated:
+            try:
                     
-                }
-            }
-        }
-        else{
-            alert("Please enter an email to be rated.")
-        }
-    }
-'''
+                query = 'INSERT INTO rating (coach_id_fk, coachee_id_fk, star_rating, rating_comment, coach_rated, coachee_rated, register_date) VALUES (%s, %s, %s, %s, %s, %s, %s)'
+                val = [(rateeID, raterID, rating, comment, coach_rated, (not coach_rated),datetime.now(pytz.utc))]
+                cur.executemany(query, val)
+
+                myconn.commit()
+
+                
+            except:
+                myconn.rollback()
+
+            myconn.close()
+            # A coachee has been rated
+        else:
+            try:
+                    
+                query = 'INSERT INTO rating (coach_id_fk, coachee_id_fk, star_rating, rating_comment, coach_rated, coachee_rated, register_date) VALUES (%s, %s, %s, %s, %s, %s, %s)'
+                val = [(raterID, rateeID, rating, comment, coach_rated, (not coach_rated),datetime.now(pytz.utc))]
+                cur.executemany(query, val)
+
+                myconn.commit()
+
+                
+            except:
+                myconn.rollback()
+
+            myconn.close()
 
 
+        return redirect(url_for('success'))
+    else:
+        # Failed rating
+        flash('Failed to create rating, pleae try again!')
+        logger.warning('Failed to create rating, pleae try again!')
+        return render_template('rating.html')
 # generic Flask app guard
 if __name__ == '__main__':
     app.run(debug=True)
